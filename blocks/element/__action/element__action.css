@@ -1,0 +1,8 @@
+.element__action {
+  background-color: #ffffff;
+  height: 19px;
+  width: 21px;
+  border: none;
+  background-image: url(../../../images/like.svg);
+  align-self: center;
+}
