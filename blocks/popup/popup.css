@@ -1,7 +1,6 @@
-@import url(./__about/popup__about.css);
 @import url(./__close-btn/popup__close-btn.css);
 @import url(./__content/popup__content.css);
-@import url(./__name/popup__name.css);
+@import url(./__field/popup__field.css);
 @import url(./__save-btn/popup__save-btn.css);
 @import url(./__title/popup__title.css);
 
@@ -12,7 +11,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s linear;
 }

@@ -1,4 +1,4 @@
-.popup__content {
+.popup-addcard__content {
   width: 430px;
   height: 330px;
   background: #ffffff;
@@ -11,7 +11,8 @@
 }
 
 @media screen and (max-width: 580px) {
-  .popup__content {
-    max-width: 65vw;
+  .popup-addcard__content {
+    max-width: 75vw;
+    max-height: 258px;
   }
 }

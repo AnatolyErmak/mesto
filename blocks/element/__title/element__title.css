@@ -7,4 +7,9 @@
   color: #000000;
   padding-top: 25px;
   padding-bottom: 31px;
+  background: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
 }
