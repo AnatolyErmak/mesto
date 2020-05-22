@@ -8,14 +8,14 @@ const job = document.querySelector(".profile__about"); // Выбор профе�
 const formElement = document.querySelector(".popup__content"); // находим форму редактирования профиля в DOM
 const elements = document.querySelector(".elements"); // находим в DOM блок element
 const addButton = document.querySelector(".profile__add-btn"); // кнопка добавления карточки в DOM
-const popupAddCard = document.querySelector(".popup-addcard"); // блок попап добавления карточки в DOM
-const cardPopupCloseBtn = document.querySelector(".popup-addcard__close-btn"); // кнопка закрытия попапа добавления карточкив DOM
-const cardName = document.querySelector(".popup-addcard__field_name"); // поле имени картинки попапа добавление карточки в DOM
-const cardUrl = document.querySelector(".popup-addcard__field_about"); // поле добавления ссылки на картинкинку ПДК в DOM
-const cardSaveBtn = document.querySelector(".popup-addcard__save-btn"); // кнопки сохранения карточки ПДК в DOM
-const formCardElement = document.querySelector(".popup-addcard__content"); // ПДК в DOM
-const popupImage = document.querySelector(".popup-image"); // попап с картинкой
-const popupImageCloseBtn = document.querySelector(".popup-image__close-btn"); // закрытие попапа с картинкой
+const popupAddCard = document.querySelector(".popup_card"); // блок попап добавления карточки в DOM
+const cardPopupCloseBtn = document.querySelector("#cardPopupCloseBtn"); // кнопка закрытия попапа добавления карточкив DOM
+const cardName = document.querySelector("#cardName"); // поле имени картинки попапа добавление карточки в DOM
+const cardUrl = document.querySelector("#cardUrl"); // поле добавления ссылки на картинкинку ПДК в DOM
+const cardSaveBtn = document.querySelector("#cardSaveBtn"); // кнопки сохранения карточки ПДК в DOM
+const formCardElement = document.querySelector("#formCardElement"); // ПДК в DOM
+const popupImage = document.querySelector(".popup_image"); // попап с картинкой
+const popupImageCloseBtn = document.querySelector("#popupImageCloseBtn"); // закрытие попапа с картинкой
 
 // первоначальный массив, который должен загружаться на страницу
 
@@ -60,7 +60,7 @@ function togglePopup(elem) {
 
 // функция создания новой карточки
 
-function addElement(item) {
+function addElement(link, name) {
   const template = document.querySelector("#template").content; // находим в DOM шаблон с карточкой.
   const elementsItem = template.cloneNode(true); // клонируем шаблон карточки
   const cardDeleteBtn = elementsItem.querySelector(".element__trash"); // Находим кнопку удаления
@@ -68,13 +68,14 @@ function addElement(item) {
   const cardImg = elementsItem.querySelector(".element__image"); // выбрали картинку
   const cardTitle = elementsItem.querySelector(".element__title"); // выбрали текст картинки
 
-  cardImg.src = item.link; // Добавляем ссылку на картинку из массива
-  cardTitle.textContent = item.name; // Добавляем заголовок из массива
+  cardImg.src = link; // Добавляем ссылку на картинку из массива
+  cardImg.alt = name; // Добавляем картинке атрибут ALT
+  cardTitle.textContent = name; // Добавляем заголовок из массива
 
   cardImg.addEventListener("click", function () {
     togglePopup(popupImage); // открываем попап с картинкой.
-    popupImage.querySelector(".popup-image__image").src = item.link; // добавляем URL картинки
-    popupImage.querySelector(".popup-image__text").textContent = item.name; // добавляем заголовок
+    popupImage.querySelector(".popup__image").src = link; // добавляем URL картинки
+    popupImage.querySelector(".popup__text").textContent = name; // добавляем заголовок
   });
 
   cardDeleteBtn.addEventListener("click", function (evt) {
@@ -87,10 +88,13 @@ function addElement(item) {
     evt.target.classList.toggle("element__action_active");
   });
 
-  elements.prepend(elementsItem); // выводим на страницу новую карточку
-
-
+  return elementsItem
 };
+
+function show () {
+  initialCards.forEach(({link, name}) => elements.append(addElement(link, name)));
+}
+
 
 initialCards.forEach(addElement);
 
@@ -108,11 +112,7 @@ function formSubmitHandler (evt) {
 
 function userAddElemnt (evt) {
   evt.preventDefault();   // отменяем стандартный сабмит для формы.
-  const newCardData = {};  // создём новый объект
-  newCardData.name = cardName.value; // Записываем в имя объекта название из поля ввода имени в форме
-  newCardData.link = cardUrl.value; // Записываем ссылку в объект из поля вводы ссылки в форме
-  initialCards.push(newCardData); // вставляем объект в конец массива с карточками
-  addElement(initialCards[initialCards.length -1]); // вызываем функцию создания карточки и вставляем данные из последнего объекта массива.
+  elements.prepend(addElement(cardUrl.value, cardName.value)); // принименяем функцию addElemnt к значениям которые записал пользователь
   togglePopup(popupAddCard); // вызываем функцию закрытия формы добавления карточки
 };
 
@@ -129,3 +129,5 @@ addButton.addEventListener('click', () => togglePopup(popupAddCard)); // Слу�
 cardPopupCloseBtn.addEventListener('click', () => togglePopup(popupAddCard)); // Слушатель кника для кнопки закрытия попапа редактирования карточки.
 
 popupImageCloseBtn.addEventListener('click',  () => togglePopup(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
+
+show ();

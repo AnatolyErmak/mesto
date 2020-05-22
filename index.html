@@ -48,37 +48,37 @@
           </form>
         </section>
 
-        <section class="popup-addcard">
-          <form class="popup-addcard__content">
-            <button class="popup-addcard__close-btn" type="button"></button>
-            <h3 class="popup-addcard__title">Новое место</h3>
+        <section class="popup popup_card">
+          <form class="popup__content" id="formCardElement">
+            <button class="popup__close-btn" id="cardPopupCloseBtn" type="button"></button>
+            <h3 class="popup__title">Новое место</h3>
             <input
-              class="popup-addcard__field popup-addcard__field_name"
+              class="popup__field popup__field_name" id="cardName"
               type="text"
               placeholder="Название"
               value=""
             />
             <input
-              class="popup-addcard__field popup-addcard__field_about"
+              class="popup__field popup__field_about" id="cardUrl"
               type="text"
               placeholder="Ссылка на картинку"
               value=""
             />
-            <button class="popup-addcard__save-btn" type="submit">
+            <button class="popup__save-btn" type="submit" id="cardSaveBtn"> 
               Создать
             </button>
           </form>
         </section>
 
-        <section class="popup-image">
-          <div class="popup-image__content">
-            <button class="popup-image__close-btn" type="button"></button>
+        <section class="popup popup_image">
+          <div class="popup__image-content">
+            <button class="popup__close-btn" type="button" id="popupImageCloseBtn"></button>
             <img
-              class="popup-image__image"
+              class="popup__image"
               src="https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg"
               alt="изображение"
             />
-            <p class="popup-image__text">Холмогорский район</p>
+            <p class="popup__text">Холмогорский район</p>
           </div>
         </section>
       </main>
@@ -90,7 +90,7 @@
     <template id="template">
       <div class="element">
         <button class="element__trash" type="button"></button>
-        <img src="./images/moscow.jpg" alt="картинка" class="element__image" />
+        <img src="#" alt="название" class="element__image" />
         <div class="element__description">
           <h2 class="element__title"></h2>
           <button class="element__action" type="button"></button>
