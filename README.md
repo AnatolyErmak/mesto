@@ -10,7 +10,7 @@
 * Grid
 * Flex
 * Адаптация под разные разрешения экранов
-* JavaScript - сделано всплывающее окно popup
+* JavaScript 
 * БЭМ
 
 **Link Gh-page**
