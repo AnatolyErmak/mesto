@@ -16,6 +16,14 @@
   cursor: pointer;
   opacity: 0.8;
 }
+
+.popup__save-btn_inactive {
+  background: white;
+  opacity: 0.2;
+  color: black;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+}
 @media screen and (max-width: 580px) {
   .popup__save-btn {
     max-width: 50vw;

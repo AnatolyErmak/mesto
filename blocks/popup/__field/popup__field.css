@@ -6,8 +6,12 @@
   font-weight: normal;
   font-size: 14px;
   line-height: 17px;
-  margin: 15px auto;
+  margin: 0px auto;
   padding-bottom: 13px;
+}
+
+.popup__field_error {
+  border-bottom: 1px solid red;
 }
 @media screen and (max-width: 580px) {
   .popup__field {

@@ -16,6 +16,8 @@ const cardSaveBtn = document.querySelector("#cardSaveBtn"); // кнопки со
 const formCardElement = document.querySelector("#formCardElement"); // ПДК в DOM
 const popupImage = document.querySelector(".popup_image"); // попап с картинкой
 const popupImageCloseBtn = document.querySelector("#popupImageCloseBtn"); // закрытие попапа с картинкой
+const template = document.querySelector("#template").content; // находим в DOM шаблон с карточкой.
+const popups = Array.from(document.querySelectorAll(".popup")); // массив всех попапов для закрытия по еск
 
 // первоначальный массив, который должен загружаться на страницу
 
@@ -52,8 +54,28 @@ const initialCards = [
   },
 ];
 
-// функция открытия и закрытия Попапов
+// Функция закрытия по эскейп метод find
 
+document.addEventListener("keydown", function (evt) {
+  if (evt.key === "Escape") {
+    const popup = popups.find(function (popup) {
+      return popup.classList.contains("popup_opened");
+    });
+    togglePopup(popup);
+  }
+});
+
+// Функция закрытия по оверлэй метод forEach
+
+popups.forEach(function (popup) {
+  popup.addEventListener("click", function (evt) {
+    if (evt.target === popup) {
+      togglePopup(popup);
+    }
+  });
+});
+
+// функция открытия и закрытия Попапов
 function togglePopup(elem) {
   elem.classList.toggle("popup_opened");
 }
@@ -61,7 +83,6 @@ function togglePopup(elem) {
 // функция создания новой карточки
 
 function addElement(link, name) {
-  const template = document.querySelector("#template").content; // находим в DOM шаблон с карточкой.
   const elementsItem = template.cloneNode(true); // клонируем шаблон карточки
   const cardDeleteBtn = elementsItem.querySelector(".element__trash"); // Находим кнопку удаления
   const likeBtn = elementsItem.querySelector(".element__action"); // Находим кнопку лайк.
@@ -80,7 +101,7 @@ function addElement(link, name) {
 
   cardDeleteBtn.addEventListener("click", function (evt) {
     // Добавляем кнопке удаления слушатель с функцией удаления карточки
-    evt.target.parentElement.remove();
+    evt.target.closest(".element").remove();
   });
 
   likeBtn.addEventListener("click", function (evt) {
@@ -88,46 +109,73 @@ function addElement(link, name) {
     evt.target.classList.toggle("element__action_active");
   });
 
-  return elementsItem
-};
-
-function show () {
-  initialCards.forEach(({link, name}) => elements.append(addElement(link, name)));
+  return elementsItem;
 }
 
+function show() {
+  initialCards.forEach(({ link, name }) =>
+    elements.append(addElement(link, name))
+  );
+}
 
 initialCards.forEach(addElement);
 
 // Обработчик  формы редактирования профиля
-function formSubmitHandler (evt) {
-  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.                                                
-  
+function formSubmitHandler(evt) {
+  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
+
   name.textContent = nameInput.value; // вставляем имя в профиль из формы ввода.
   job.textContent = jobInput.value; // вставляем профессию в профиль из формы ввода.
-  
+
   togglePopup(popUp); // Закрываем попап
-};
+}
 
 // Функция создания добавления нового объекта в массив из формы добавления новой карточки.
 
-function userAddElemnt (evt) {
-  evt.preventDefault();   // отменяем стандартный сабмит для формы.
+function userAddElemnt(evt) {
+  evt.preventDefault(); // отменяем стандартный сабмит для формы.
   elements.prepend(addElement(cardUrl.value, cardName.value)); // принименяем функцию addElemnt к значениям которые записал пользователь
   togglePopup(popupAddCard); // вызываем функцию закрытия формы добавления карточки
-};
+}
 
-formElement.addEventListener('submit', formSubmitHandler); // слушатель события “submit” - «отправка» в форме редактирования профиля.
+// Функция удаления ошибок для попапов
 
-editButton.addEventListener('click', () => togglePopup(popUp)); // ловим клик по кнопке редактирования и открываем popup
+function clearErrors(element) {
+  const inputlist = element.querySelectorAll(".popup__field"); // выбираем все импуты
+  const spanlist = element.querySelectorAll(".popup__span-error"); // выбираем все спаны
+  const button = element.querySelector(".popup__save-btn");
+  inputlist.forEach((input) => input.classList.remove("popup__field_error")); // проходим методом forEach каждый импут и удаляем модификатор ошибки
+  spanlist.forEach((span) => {
+    span.classList.remove("popup__span-error_active");
+    span.textContent = "";
+  }); // проходим методом forEach каждый спан и удаляем модификатор ошибки
 
-popupClose.addEventListener('click', () => togglePopup(popUp)); // ловим клик по кнопке закрытия попапа и закрываем его функцией     
+  if (element === popUp) {
+    button.disabled = false;
+    button.classList.remove("popup__save-btn_inactive");
+  }
+}
 
-formCardElement.addEventListener('submit', userAddElemnt); // навешиваем слушатель события сабмит на форму добавения карточки.
- 
-addButton.addEventListener('click', () => togglePopup(popupAddCard)); // Слушатель клика для кнопки добавить карточку в профиле пользователя.
+formElement.addEventListener("submit", formSubmitHandler); // слушатель события “submit” - «отправка» в форме редактирования профиля.
 
-cardPopupCloseBtn.addEventListener('click', () => togglePopup(popupAddCard)); // Слушатель кника для кнопки закрытия попапа редактирования карточки.
+editButton.addEventListener("click", () => {
+  clearErrors(popUp);
+  togglePopup(popUp);
+  nameInput.value = name.textContent;
+  jobInput.value = job.textContent;
+}); // ловим клик по кнопке редактирования и открываем popup
 
-popupImageCloseBtn.addEventListener('click',  () => togglePopup(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
+popupClose.addEventListener("click", () => togglePopup(popUp)); // ловим клик по кнопке закрытия попапа и закрываем его функцией
 
-show ();
+formCardElement.addEventListener("submit", userAddElemnt); // навешиваем слушатель события сабмит на форму добавения карточки.
+
+addButton.addEventListener("click", () => {
+  clearErrors(popupAddCard);
+  togglePopup(popupAddCard);
+}); // Слушатель клика для кнопки добавить карточку в профиле пользователя.
+
+cardPopupCloseBtn.addEventListener("click", () => togglePopup(popupAddCard)); // Слушатель кника для кнопки закрытия попапа редактирования карточки.
+
+popupImageCloseBtn.addEventListener("click", () => togglePopup(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
+
+show();
