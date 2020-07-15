@@ -72,6 +72,29 @@ function enableValidation ({formSelector, ...rest}) {
     }); 
  
 }; 
+
+// Функция удаления ошибок для попапов
+
+function clearErrors(element) {
+    if (element === popupImage) {
+        return 
+      }
+    const inputlist = element.querySelectorAll(".popup__field"); // выбираем все импуты
+    const spanlist = element.querySelectorAll(".popup__span-error"); // выбираем все спаны
+    const button = element.querySelector(".popup__save-btn");
+    inputlist.forEach((input) => input.classList.remove("popup__field_error")); // проходим методом forEach каждый импут и удаляем модификатор ошибки
+    spanlist.forEach((span) => {
+      span.classList.remove("popup__span-error_active");
+      span.textContent = "";
+    }); // проходим методом forEach каждый спан и удаляем модификатор ошибки
+    button.disabled = true;
+    button.classList.add("popup__save-btn_inactive");
+
+    if (element === popUp) {
+      button.disabled = false;
+      button.classList.remove("popup__save-btn_inactive");
+    }
+  }
  
 // включаем валидацию вызовом функции 
  
