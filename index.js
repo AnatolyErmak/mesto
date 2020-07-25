@@ -1,3 +1,6 @@
+import { Card } from './Card.js'
+import { FormValidator } from './FormValidator.js'
+
 const editButton = document.querySelector(".profile__edit-btn"); // выбираем кнопкну редактировать в профиле
 const popUp = document.querySelector(".popup"); // выбираем блок попап для редактирования профиля
 const popupClose = document.querySelector(".popup__close-btn"); // кнопка закрытия формы редактирования профиля
@@ -13,14 +16,14 @@ const cardPopupCloseBtn = document.querySelector("#cardPopupCloseBtn"); // кн�
 const cardName = document.querySelector("#cardName"); // поле имени картинки попапа добавление карточки в DOM
 const cardUrl = document.querySelector("#cardUrl"); // поле добавления ссылки на картинкинку ПДК в DOM
 const formCardElement = document.querySelector("#formCardElement"); // ПДК в DOM
-const popupImage = document.querySelector(".popup_image"); // попап с картинкой
+export const popupImage = document.querySelector(".popup_image"); // попап с картинкой
 const popupImageCloseBtn = document.querySelector("#popupImageCloseBtn"); // закрытие попапа с картинкой
-const template = document.querySelector("#template").content; // находим в DOM шаблон с карточкой.
 const popups = Array.from(document.querySelectorAll(".popup")); // массив всех попапов для закрытия по еск
+const forms = Array.from(document.querySelectorAll('.popup__content')); // массив форм
 
 // первоначальный массив, который должен загружаться на страницу
 
-const initialCards = [
+ const initialCards = [
   {
     name: "Архыз",
     link:
@@ -53,6 +56,15 @@ const initialCards = [
   },
 ];
 
+// функция закрузки первых 6 карточке нашего массива
+
+function render () {	
+  initialCards.forEach(({link, name}) => {	
+     const cardsArray = new Card({link, name}, '#template');	
+     elements.append(cardsArray.generateCard()); 	
+  });	
+}    
+
 // Функция закрытия по эскейп метод find
 
 function escapeclose (evt) {
@@ -69,7 +81,6 @@ function closepops(elem) {
   elem.classList.remove("popup_opened");
   document.removeEventListener("keydown", escapeclose);
   elem.removeEventListener('click' , popupEventHandler);
-  
 };
 
 // функция определения кликов на попапе
@@ -91,63 +102,38 @@ function addPopupCloseListener (elem) {
 
 // функция открытия попапов 
 
-function open(elem) {
-  addPopupCloseListener(elem);
-  clearErrors(elem);
-  elem.classList.add("popup_opened");
+export function openAnyPopup(elem) {  // необходимый попап
+  addPopupCloseListener(elem); // установка слушателей закрытия попапов
+  clearErrors(elem);  // очистка ошибок формы
+  elem.classList.add("popup_opened"); // удаление/добавление модификатора у нужного попапа
+}
 
-};
+// Функция находящая формы и запускающая валидацию
 
+function startFormValidation() {
+  forms.forEach((form) => {
+    const originalValid = new FormValidator({  // создаем экзмпляр класса валидации
+     formSelector: '.popup__content',
+     inputSelector: '.popup__field',
+     submitButtonSelector: '.popup__save-btn',
+     inactiveButtonClass: 'popup__save-btn_inactive',
+     inputErrorClass: 'popup__field_error',
+     errorClass: 'popup__span-error_active'
+     }, form)
 
+     originalValid.enableValidation() //вызываем в экземпляре метод с запуском процесса валидации
+  })
+}
+  
 // Функция закрытия по оверлэй метод forEach
 
 popups.forEach(function (popup) {
   popup.addEventListener("click", function (evt) {
     if (evt.target === popup) {
-      open(popup);
+      openAnyPopup(popup);
     }
   });
 });
-
-
-// функция создания новой карточки
-
-function addElement(link, name) {
-  const elementsItem = template.cloneNode(true); // клонируем шаблон карточки
-  const cardDeleteBtn = elementsItem.querySelector(".element__trash"); // Находим кнопку удаления
-  const likeBtn = elementsItem.querySelector(".element__action"); // Находим кнопку лайк.
-  const cardImg = elementsItem.querySelector(".element__image"); // выбрали картинку
-  const cardTitle = elementsItem.querySelector(".element__title"); // выбрали текст картинки
-
-  cardImg.src = link; // Добавляем ссылку на картинку из массива
-  cardImg.alt = name; // Добавляем картинке атрибут ALT
-  cardTitle.textContent = name; // Добавляем заголовок из массива
-
-  cardImg.addEventListener("click", function () {
-    open(popupImage); // открываем попап с картинкой.
-    popupImage.querySelector(".popup__image").src = link; // добавляем URL картинки
-    popupImage.querySelector(".popup__text").textContent = name; // добавляем заголовок
-  });
-
-  cardDeleteBtn.addEventListener("click", function (evt) {
-    // Добавляем кнопке удаления слушатель с функцией удаления карточки
-    evt.target.closest(".element").remove();
-  });
-
-  likeBtn.addEventListener("click", function (evt) {
-    // Добавляем кнопке лайк слушатель с функцией постановки лайка
-    evt.target.classList.toggle("element__action_active");
-  });
-
-  return elementsItem;
-}
-
-function show() {
-  initialCards.forEach(({ link, name }) =>
-    elements.append(addElement(link, name))
-  );
-}
-
 
 // Обработчик  формы редактирования профиля
 function formSubmitHandler(evt) {
@@ -163,16 +149,47 @@ function formSubmitHandler(evt) {
 
 function userAddElemnt(evt) {
   evt.preventDefault(); // отменяем стандартный сабмит для формы.
-  elements.prepend(addElement(cardUrl.value, cardName.value)); // принименяем функцию addElemnt к значениям которые записал пользователь
+  const obj = {}; // создаём новый объект
+  obj.link = cardUrl.value // записываем в объект ключ link со значением из поля ввода ссылки
+  obj.name = cardName.value // записываем в объект ключ name со значением из поля ввода названия
+  const originalCard = new Card(obj, '#template') // создать экземляр класса Card
+  elements.prepend(originalCard.generateCard()) // вызываем функцию генерации карточки, вставляем данные и выводим на
   closepops(popupAddCard); // вызываем функцию закрытия формы добавления карточки
   popupAddCard.querySelector('.popup__content').reset()
 }
+
+// Функция удаления ошибок для попапов
+
+function clearErrors(element) {
+  if (element === popupImage) {  // если выбран попап с картинкой код останавливается
+      return 
+    }
+  const inputlist = element.querySelectorAll(".popup__field"); // выбираем все импуты
+  const spanlist = element.querySelectorAll(".popup__span-error"); // выбираем все спаны
+  const button = element.querySelector(".popup__save-btn");
+  inputlist.forEach((input) => input.classList.remove("popup__field_error")); // проходим методом forEach каждый импут и удаляем модификатор ошибки
+  spanlist.forEach((span) => {
+    span.classList.remove("popup__span-error_active");
+    span.textContent = "";
+  }); // проходим методом forEach каждый спан и удаляем модификатор ошибки
+  button.disabled = true;  // дизэйблим кнопку
+  button.classList.add("popup__save-btn_inactive"); // делаем кнопну неактивной
+
+  if (element === popUp) { // если элемент равен папапу
+    button.disabled = false; // делаем кнопку активной 
+    button.classList.remove("popup__save-btn_inactive"); // убираем статус неактивной
+  }
+}
+
+
+// устанавливаем слушатели и вызываем нужные функции
+
 
 formElement.addEventListener("submit", formSubmitHandler); // слушатель события “submit” - «отправка» в форме редактирования профиля.
 
 editButton.addEventListener("click", () => {
   clearErrors(popUp);
-  open(popUp);
+  openAnyPopup(popUp);
   nameInput.value = name.textContent;
   jobInput.value = job.textContent;
 }); // ловим клик по кнопке редактирования и открываем popup
@@ -183,12 +200,14 @@ formCardElement.addEventListener("submit", userAddElemnt); // навешивае
 
 addButton.addEventListener("click", () => {
   clearErrors(popupAddCard);
-  open(popupAddCard);
+  openAnyPopup(popupAddCard);
 }); // Слушатель клика для кнопки добавить карточку в профиле пользователя.
 
 cardPopupCloseBtn.addEventListener("click", () => closepops(popupAddCard)); // Слушатель клика для кнопки закрытия попапа редактирования карточки.
 
 popupImageCloseBtn.addEventListener("click", () => closepops(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
 
-show();
+render ();
+
+startFormValidation();
 
