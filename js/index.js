@@ -1,3 +1,5 @@
+import {initialCards} from './initialCards.js'
+import {openAnyPopup} from './utils.js'
 import { Card } from './Card.js'
 import { FormValidator } from './FormValidator.js'
 
@@ -21,41 +23,6 @@ const popupImageCloseBtn = document.querySelector("#popupImageCloseBtn"); // з�
 const popups = Array.from(document.querySelectorAll(".popup")); // массив всех попапов для закрытия по еск
 const forms = Array.from(document.querySelectorAll('.popup__content')); // массив форм
 
-// первоначальный массив, который должен загружаться на страницу
-
- const initialCards = [
-  {
-    name: "Архыз",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
-  },
-  {
-    name: "Челябинская область",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
-  },
-  {
-    name: "Иваново",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
-  },
-  {
-    name: "Камчатка",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
-  },
-  {
-    name: "Холмогорский район",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
-  },
-  {
-    name: "Байкал",
-    link:
-      "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-  },
-];
-
 // функция закрузки первых 6 карточке нашего массива
 
 function render () {	
@@ -65,48 +32,36 @@ function render () {
   });	
 }    
 
+// Функция закрытия попапов
+function closePopup (elem) {
+  elem.classList.remove("popup_opened");
+  document.removeEventListener("keydown", escapeСlose); 
+};
+
 // Функция закрытия по эскейп метод find
 
-function escapeclose (evt) {
+function escapeСlose (evt) {
   if (evt.key === "Escape") {
     const popup = popups.find(function (popup) {
       return popup.classList.contains("popup_opened");
     });
-    closepops(popup);
+    closePopup(popup);
   }
 };
 
-// Функция закртия попапов
-function closepops(elem) {
-  elem.classList.remove("popup_opened");
-  document.removeEventListener("keydown", escapeclose);
-  elem.removeEventListener('click' , popupEventHandler);
-};
+// Фунцкия закрытия по оверлэй
 
-// функция определения кликов на попапе
-function popupEventHandler (evt) { 
-  if (evt.target.classList.contains('popup')) {    // если клик по оверлею 
-    closepops(evt.target) 
-  }   
-  if (evt.target.classList.contains('popup__close-btn')) {   // если клик по кнопке закрыть 
-    closepops(evt.target.closest('.popup')); 
-  } 
-} 
+const closeByOverlay = (evt, popup) => {
+  if (evt.target.classList.contains('popup')) {
+    closePopup(popup);
+  }
+};
 
 // функция добавления слушателей на попап
 
-function addPopupCloseListener (elem) { 
-  document.addEventListener('keydown', escapeclose);   // устанавливаем слушатель esc 
-  elem.addEventListener('click', popupEventHandler);  // устанавливаем слушатель кликов 
+export function addPopupCloseListener (elem) { 
+  document.addEventListener('keydown', escapeСlose);   // устанавливаем слушатель esc 
 } 
-
-// функция открытия попапов 
-
-export function openAnyPopup(elem) {  // необходимый попап
-  addPopupCloseListener(elem); // установка слушателей закрытия попапов
-  clearErrors(elem);  // очистка ошибок формы
-  elem.classList.add("popup_opened"); // удаление/добавление модификатора у нужного попапа
-}
 
 // Функция находящая формы и запускающая валидацию
 
@@ -125,15 +80,6 @@ function startFormValidation() {
   })
 }
   
-// Функция закрытия по оверлэй метод forEach
-
-popups.forEach(function (popup) {
-  popup.addEventListener("click", function (evt) {
-    if (evt.target === popup) {
-      openAnyPopup(popup);
-    }
-  });
-});
 
 // Обработчик  формы редактирования профиля
 function formSubmitHandler(evt) {
@@ -142,25 +88,25 @@ function formSubmitHandler(evt) {
   name.textContent = nameInput.value; // вставляем имя в профиль из формы ввода.
   job.textContent = jobInput.value; // вставляем профессию в профиль из формы ввода.
 
-  closepops(popUp); // Закрываем попап
+  closePopup(popUp); // Закрываем попап
 }
 
 // Функция создания добавления нового объекта в массив из формы добавления новой карточки.
 
-function userAddElemnt(evt) {
+function addNewCard(evt) {
   evt.preventDefault(); // отменяем стандартный сабмит для формы.
   const obj = {}; // создаём новый объект
   obj.link = cardUrl.value // записываем в объект ключ link со значением из поля ввода ссылки
   obj.name = cardName.value // записываем в объект ключ name со значением из поля ввода названия
   const originalCard = new Card(obj, '#template') // создать экземляр класса Card
   elements.prepend(originalCard.generateCard()) // вызываем функцию генерации карточки, вставляем данные и выводим на
-  closepops(popupAddCard); // вызываем функцию закрытия формы добавления карточки
+  closePopup(popupAddCard); // вызываем функцию закрытия формы добавления карточки
   popupAddCard.querySelector('.popup__content').reset()
 }
 
 // Функция удаления ошибок для попапов
 
-function clearErrors(element) {
+export function clearErrors(element) {
   if (element === popupImage) {  // если выбран попап с картинкой код останавливается
       return 
     }
@@ -184,6 +130,15 @@ function clearErrors(element) {
 
 // устанавливаем слушатели и вызываем нужные функции
 
+popUp.addEventListener ('click', function (evt) {    // закрыть основной попап по оверлей
+  closeByOverlay(evt, popUp )
+})
+popupAddCard.addEventListener ('click', function (evt) { // закрыть  попап с карточкой  по оверлей
+  closeByOverlay(evt, popupAddCard )
+})
+popupImage.addEventListener ('click', function (evt) { // закрыть  попап с картинкой  по оверлей
+  closeByOverlay(evt, popupImage )
+})
 
 formElement.addEventListener("submit", formSubmitHandler); // слушатель события “submit” - «отправка» в форме редактирования профиля.
 
@@ -194,18 +149,18 @@ editButton.addEventListener("click", () => {
   jobInput.value = job.textContent;
 }); // ловим клик по кнопке редактирования и открываем popup
 
-popupClose.addEventListener("click", () => closepops(popUp)); // ловим клик по кнопке закрытия попапа и закрываем его функцией
+popupClose.addEventListener("click", () => closePopup(popUp)); // ловим клик по кнопке закрытия попапа и закрываем его функцией
 
-formCardElement.addEventListener("submit", userAddElemnt); // навешиваем слушатель события сабмит на форму добавения карточки.
+formCardElement.addEventListener("submit", addNewCard); // навешиваем слушатель события сабмит на форму добавения карточки.
 
 addButton.addEventListener("click", () => {
   clearErrors(popupAddCard);
   openAnyPopup(popupAddCard);
 }); // Слушатель клика для кнопки добавить карточку в профиле пользователя.
 
-cardPopupCloseBtn.addEventListener("click", () => closepops(popupAddCard)); // Слушатель клика для кнопки закрытия попапа редактирования карточки.
+cardPopupCloseBtn.addEventListener("click", () => closePopup(popupAddCard)); // Слушатель клика для кнопки закрытия попапа редактирования карточки.
 
-popupImageCloseBtn.addEventListener("click", () => closepops(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
+popupImageCloseBtn.addEventListener("click", () => closePopup(popupImage)); //  Слушатель клика для закрытия попапа с картинкой по кнопке закрыть.
 
 render ();
 

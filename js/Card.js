@@ -1,25 +1,14 @@
-import {popupImage,openAnyPopup} from './index.js'; // импорт функции для открытия попапа и перемнной попапа
+import {popupImage,} from './index.js'; // импорт перемнной попапа
+import {openAnyPopup} from './utils.js' // импорт функции для открытия попапа
 
 export class Card {
   constructor(data, selector) {
+    this._selector = selector;
     this._link = data.link;
     this._name = data.name;
-    this._selector = selector;
+    this._element = document.querySelector(this._selector).content.querySelector('.element').cloneNode(true);
+    this._image = this._element.querySelector('.element__image');
   }
-
-  // Получаем разметку 
-
-_getTemplate () {
-  const cardElement = document
-  .querySelector(this._selector)
-  .content
-  .querySelector('.element')
-  .cloneNode(true);
-
-  this._element = cardElement;	
-
-  return this._element;    
-}
 
 // просмотр картинки в попапе
 
@@ -70,11 +59,11 @@ _setCardEventListeners(){
 // наполним карточку 
 
 generateCard() {
-  this._getTemplate(); // почаем разметку карточки
   this._setCardEventListeners(); // ставим слушатели
 
-  this._element.querySelector('.element__image').src = this._link; // вставляем картинку
-  this._element.querySelector('.element__image').alt = this._name; // ставим атрибут alt
+  this._image.src = this._link; // вставляем картинку
+  this._image.alt = this._name; // ставим атрибут alt
+  
   this._element.querySelector('.element__title').textContent = this._name; // получаем название
 
   return this._element // возвращаем готовую карточку
