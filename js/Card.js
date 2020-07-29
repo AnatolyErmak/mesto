@@ -1,4 +1,4 @@
-import {popupImage,} from './index.js'; // импорт перемнной попапа
+import {popupImage} from './constants.js'; // импорт перемнной попапа
 import {openAnyPopup} from './utils.js' // импорт функции для открытия попапа
 
 export class Card {
