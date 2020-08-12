@@ -1,12 +1,122 @@
-import {editButton, popUp, popupClose, nameInput, jobInput, name, job, formElement, elements,
-  addButton, popupAddCard, cardPopupCloseBtn, cardName, cardUrl, formCardElement, popupImage, popupImageCloseBtn,
-  popups, forms} from './constants.js'
-import {initialCards} from './initialCards.js'
-import {openAnyPopup, closePopup, clearErrors} from './utils.js'
-import { Card } from './Card.js'
-import { FormValidator } from './FormValidator.js'
+import '../pages/index.css';
+import Card from '../components/Card.js';
+import Section from '../components/Section.js';
+import PopupWithForm from '../components/PopupWithForm.js';
+import PopupWithImage  from '../components/PopupWithImage.js';
+import UserInfo from '../components/UserInfo.js';
+import {editButton, nameInput, jobInput, formElement, addButton, popupAddCard} from '../utils/constants.js';
+import {initialCards} from '../utils/initialCards.js';
+import {clearErrors, startFormValidation} from '../utils/utils.js';
 
-// функция закрузки первых 6 карточке нашего массива
+
+//создаем экземпляр UserInfo 
+const userInfo = new UserInfo( {name: '.profile__name', job: '.profile__about'});
+
+// создаем экземпляр попапа для редактировать профиль
+
+const profilePopup = new PopupWithForm('.popup', (formData) => {
+//Записываем данные на страницу
+  userInfo.setUserInfo(formData); 
+});
+
+// ловим клик по кнопке редактиварония профиля
+
+editButton.addEventListener('click', () => {
+  // очищаем ошибки
+  clearErrors(formElement);
+  // получаем объект с данными пользователя со страницы
+  const userData = userInfo.getUserInfo();
+  // записываем данные в форму попапа
+  nameInput.value = userData.name;
+  jobInput.value = userData.job;
+  // отрокем попап
+  profilePopup.open();
+})
+
+// создаём экземпляр класса попапа с картинкой
+
+const imagePopup = new PopupWithImage('.popup_image');
+
+// создаём экземпляр попапа для добавления карточки
+
+const addCardPopup = new PopupWithForm ('.popup_card', (formData) => {
+// создаем экземпляр класса Section
+  const userCard = new Section ({
+// передаём ему объект с данными из полей ввода формы
+  items: [formData],
+// запускаем функцию создания карточки
+  renderer: (data) => {
+// создаём экземпляр класса Card с данными формы
+  const card = new Card (data, (evt) => imagePopup.open(evt), '#template');
+// вставляем карточку в контейнер
+  userCard.addItem(card.generateCard());
+  }}, '.elements');
+// вызываем метод для отрисовки карточек
+  userCard.renderItems();
+  // закрываем попап
+  imagePopup.close();
+});
+
+// ловим клик по кнопке добавления карточки
+
+addButton.addEventListener('click', () => {
+  clearErrors(popupAddCard);
+  addCardPopup.open();
+})
+
+// Функция загрузки первоначальных 6 карточек на страницу из исходного массива
+
+const cardList = new Section ({
+  items: initialCards,
+  renderer: (data) => {
+    const card = new Card (data, (evt) => imagePopup.open(evt), '#template');
+    cardList.addItem(card.generateCard());
+  }}, '.elements'
+);
+
+cardList.renderItems();
+
+startFormValidation();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* // функция закрузки первых 6 карточке нашего массива
 
 function render () {	
   initialCards.forEach(({link, name}) => {	
@@ -21,23 +131,6 @@ const closeByOverlay = (evt, popup) => {
   if (evt.target.classList.contains('popup')) {
     closePopup(popup);
   }
-}
-
-// Функция находящая формы и запускающая валидацию
-
-function startFormValidation() {
-  forms.forEach((form) => {
-    const originalValid = new FormValidator({  // создаем экзмпляр класса валидации
-     formSelector: '.popup__content',
-     inputSelector: '.popup__field',
-     submitButtonSelector: '.popup__save-btn',
-     inactiveButtonClass: 'popup__save-btn_inactive',
-     inputErrorClass: 'popup__field_error',
-     errorClass: 'popup__span-error_active'
-     }, form)
-
-     originalValid.enableValidation() //вызываем в экземпляре метод с запуском процесса валидации
-  })
 }
   
 
@@ -100,5 +193,5 @@ popupImageCloseBtn.addEventListener("click", () => closePopup(popupImage)); //  
 
 render ();
 
-startFormValidation();
+startFormValidation(); */
 
