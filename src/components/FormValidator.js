@@ -1,11 +1,11 @@
 export default  class FormValidator {
-    constructor(data, element){
-        this._inputSelector = data.inputSelector
-        this._submitButtonSelector = data.submitButtonSelector
-        this._inactiveButtonClass = data.inactiveButtonClass
-        this._inputErrorClass = data.inputErrorClass
-        this._errorClass = data.errorClass
-        this._element = element
+    constructor(data){
+        this._element = document.querySelector(data.formSelector) //форма
+        this._inputList = Array.from(this._element.querySelectorAll(data.inputSelector)) // массив инпутов
+        this._submitButton = this._element.querySelector(data.submitButtonSelector) // кнопка сабмит
+        this._inactiveButtonClass = data.inactiveButtonClass // модификатор неактив кнопки
+        this._inputErrorClass = data.inputErrorClass // модификатор ввода ошибки
+        this._errorClass = data.errorClass // модификатор спана с ошибкой
     }
 
     // функция показа ошибки валидации
@@ -48,9 +48,9 @@ export default  class FormValidator {
     // функция включает и выключает кнопку отправить
 
     _toggleButtonState(inputList, buttonElement){
-        if (this._hasInvalidInput(inputList)) {                                             // если есть невалидный импут 
-            buttonElement.classList.add(this._inactiveButtonClass)                         // добавляем кнопке сабмит модификатор "неактивна" 
-            buttonElement.disabled = true                                            // добавляем кнопке атрибут disabled 
+        if (this._hasInvalidInput(inputList)) {                       // если есть невалидный импут 
+            buttonElement.classList.add(this._inactiveButtonClass)    // добавляем кнопке сабмит модификатор "неактивна" 
+            buttonElement.disabled = true                             // добавляем кнопке атрибут disabled 
     } else {                                                            // если все поля валидны
         buttonElement.classList.remove(this._inactiveButtonClass)    // удаляем модификатор
         buttonElement.disabled = false // убираем атрибут disabled
@@ -60,18 +60,29 @@ export default  class FormValidator {
     // функция устанавливает слушатели инпута на формы 
 
     _setFormEventListeners(formElement) {
-        const inputList = Array.from(formElement.querySelectorAll(this._inputSelector)) // создаём массив инпутов
-        const buttonElement = formElement.querySelector(this._submitButtonSelector)   // находим кнопку  сабмит
-
-        this._toggleButtonState(inputList, buttonElement) // выключаем кнопку
-
-        inputList.forEach((inputElement) => {// проходим по массиву инпутов 
-            inputElement.addEventListener('input', () => {  // каждому добавляем слушатель ввода
-            this._checkInputValidity ( formElement,inputElement) // функцию проверки инпутов и вывода ошибки
-            this._toggleButtonState (inputList, buttonElement) // включаем кнопку
-        })
-      })
+        this._inputList.forEach((inputElement) => {                                            // проходим по массиву инпутов
+            inputElement.addEventListener('input', () => {                         // каждому добавляем слушатель ввода
+                this._checkInputValidity (formElement, inputElement);                    // функцию проверки игпутов и вывода ошибки 
+                this._toggleButtonState (this._inputList , this._submitButton);          // выключение кнопки
+            });
+        });
     }
+    // сброс ошибкок
+    formErrorsReset() {
+        this._inputList.forEach((input) => input.classList.remove(this._inputErrorClass));
+        const errors = Array.from(this._element.querySelectorAll('.popup__span-error'));
+        errors.forEach((error) => {
+            error.classList.remove(this._inputErrorClass);
+            error.textContent = '';
+        });
+        if (this._element.classList.contains('popup__content-profile')) {
+            this._submitButton.classList.remove(this._inactiveButtonClass);       // удаляем модификатор
+            this._submitButton.disabled = false;
+            return;
+        }
+        this._toggleButtonState(this._inputList, this._submitButton);
+    }
+
 
     // функция запускающая процесс валидации
 

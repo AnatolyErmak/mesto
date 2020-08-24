@@ -4,6 +4,8 @@ export default class PopupWithForm extends Popup{
     constructor(selector, formSubmit){
         super(selector);
         this._formSubmit = formSubmit;
+        this._submitButton = this._popup.querySelector('.popup__button');
+        this._defaultButtonText = this._submitButton.textContent;
     }
     _getInputValues(){
         // берём все инпуты 
@@ -19,10 +21,9 @@ export default class PopupWithForm extends Popup{
     }
 
     // функция вешает слушатели
-    _setEventListeners(){
-        super._setEventListeners(); // наследуем метод из Popup.js
-        this._submit = this._handleSubmitForm.bind(this); // забиндил контекст
-        this._popup.querySelector('form').addEventListener('submit', this._submit); // добавил колбэк
+    setEventListeners(){
+        super.setEventListeners(); // наследуем метод из Popup.js
+        this._popup.querySelector('form').addEventListener('submit', (evt) => this._handleSubmitForm(evt));
     }
 
     // функция обработки отправки формы
@@ -30,12 +31,18 @@ export default class PopupWithForm extends Popup{
     _handleSubmitForm(evt){ 
         evt.preventDefault(); // отменяем привычное 
         this._formSubmit(this._getInputValues()); // отправляем данные с импутов
-        this.close(); // закрываем форму при sumbit
+    }
+
+    setLoadingButtonText() {
+        this._submitButton.textContent = 'Загрузка...';
+    }
+
+    setDefaultButtonText() {
+        this._submitButton.textContent = this._defaultButtonText;
     }
 
     close(){
         super.close();
         this._popup.querySelector('form').reset(); // при закртыии сбрасываем форму
-        this._popup.querySelector('form').removeEventListener('submit', this._submit); // удаляем слушатель
     }
 }

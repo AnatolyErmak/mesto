@@ -5,6 +5,8 @@
   border: none;
   background-image: url(../../../images/like.svg);
   align-self: center;
+  margin-top: 21px;
+  margin-bottom: 0px;
 }
 
 .element__action:hover {

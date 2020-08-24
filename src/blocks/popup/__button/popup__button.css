@@ -1,10 +1,10 @@
-.popup__save-btn {
+.popup__button {
   width: 358px;
   background: #000000;
   border: none;
   border-radius: 2px;
   color: white;
-  margin: 23px auto 36px;
+  
   font-style: normal;
   font-weight: normal;
   font-size: 18px;
@@ -24,8 +24,22 @@
   border: 1px solid #000000;
   box-sizing: border-box;
 }
+
+.popup__button_delete {
+  margin: 0px;
+}
+
+.popup__button_form {
+  margin: 23px auto 36px;
+}
 @media screen and (max-width: 580px) {
   .popup__save-btn {
+    max-width: 50vw;
+  }
+  .popup__button_delete {
+    max-width: 50vw;
+  }
+  .popup__button_form {
     max-width: 50vw;
   }
 }
