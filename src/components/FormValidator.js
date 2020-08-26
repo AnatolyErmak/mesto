@@ -1,8 +1,9 @@
 export default  class FormValidator {
-    constructor(data){
-        this._element = document.querySelector(data.formSelector) //форма
-        this._inputList = Array.from(this._element.querySelectorAll(data.inputSelector)) // массив инпутов
-        this._submitButton = this._element.querySelector(data.submitButtonSelector) // кнопка сабмит
+    constructor(data, form){
+        
+        this._form = form;
+        this._inputList = Array.from(this._form.querySelectorAll(data.inputSelector)) // массив инпутов
+        this._submitButton = this._form.querySelector(data.submitButtonSelector) // кнопка сабмит
         this._inactiveButtonClass = data.inactiveButtonClass // модификатор неактив кнопки
         this._inputErrorClass = data.inputErrorClass // модификатор ввода ошибки
         this._errorClass = data.errorClass // модификатор спана с ошибкой
@@ -70,12 +71,12 @@ export default  class FormValidator {
     // сброс ошибкок
     formErrorsReset() {
         this._inputList.forEach((input) => input.classList.remove(this._inputErrorClass));
-        const errors = Array.from(this._element.querySelectorAll('.popup__span-error'));
+        const errors = Array.from(this._form.querySelectorAll('.popup__span-error'));
         errors.forEach((error) => {
             error.classList.remove(this._inputErrorClass);
             error.textContent = '';
         });
-        if (this._element.classList.contains('popup__content-profile')) {
+        if (this._form.classList.contains('popup__content-profile')) {
             this._submitButton.classList.remove(this._inactiveButtonClass);       // удаляем модификатор
             this._submitButton.disabled = false;
             return;
@@ -87,7 +88,7 @@ export default  class FormValidator {
     // функция запускающая процесс валидации
 
     enableValidation() {
-        this._setFormEventListeners(this._element); 
+        this._setFormEventListeners(this._form); 
     }
 
 }

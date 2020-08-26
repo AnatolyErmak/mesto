@@ -9,8 +9,8 @@ import {
   editButton,
   nameInput,
   jobInput,
-  addButton,
-  editAvatar
+  addButton, profilePopupForm, profilePopupAddCard,  profilePopupAvatar,
+  editAvatar, popupLink,popupName, formElements
 } from '../utils/constants.js';
 import FormValidator from '../components/FormValidator.js'
 import UserInfo from '../components/UserInfo.js';
@@ -39,11 +39,11 @@ const profilePopup = new PopupWithForm('.popup', (formData) => {
   //Записываем данные на страницу
   api.setUserInfo(formData) // отправляем данные о профиле на сервер
     .then(data => userInfo.setUserInfo(data))
-    .then(() => profilePopup.close())
     .catch((err) => {
       profilePopup.setDefaultButtonText();
       console.log(err)
     })
+    .then(() => profilePopup.close())
 });
 profilePopup.setEventListeners();
 
@@ -55,11 +55,11 @@ const avatarPopup = new PopupWithForm('.popup__avatar', (formData) => {
       .then((data) => {
           userInfo.setUserAvatar(data);
       })
-      .then(() => avatarPopup.close())
       .catch((err) => {
           avatarPopup.setDefaultButtonText();
           console.log(err)
       })
+      .then(() => avatarPopup.close())
 });
 
 
@@ -79,8 +79,8 @@ const deleteCardPopup = new PopupDelete('.popup_delete', (data, card) => {
   .then(() => {
   card.cardDelete();
   })
-  .then(() => deleteCardPopup.close())
   .catch(err => console.log(err))
+  .then(() => deleteCardPopup.close())
 }); 
   deleteCardPopup.setEventListeners();
 
@@ -118,7 +118,7 @@ editButton.addEventListener('click', () => {
 
 
 // создаём экземпляр класса попапа с картинкой
-const imagePopup = new PopupWithImage('.popup_image');
+const imagePopup = new PopupWithImage('.popup_image', popupName, popupLink);
 imagePopup.setEventListeners();
 
 // создаём экземпляр попапа для добавленя картоки
@@ -145,35 +145,13 @@ addButton.addEventListener('click', () => {
   addCardPopup.open();
 });
 
-// создаем экземпляры класса для валидации и вызываем методы для запуска валидации на формах.
-const profileValidation = new FormValidator({              
-  formSelector: '#profile-form',
-  inputSelector: '.popup__field',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__save-btn_inactive',
-  inputErrorClass: 'popup__field_error', 
-  errorClass: 'popup__span-error_active' 
-});
+const profileValidation = new FormValidator(formElements, profilePopupForm);
 profileValidation.enableValidation();
 
-const addCardValidation = new FormValidator({              
-  formSelector: '#card-form',
-  inputSelector: '.popup__field',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__save-btn_inactive',
-  inputErrorClass: 'popup__field_error',
-  errorClass: 'popup__span-error_active'
-});
+const addCardValidation = new FormValidator(formElements, profilePopupAddCard);
 addCardValidation.enableValidation();
 
-const editAvatarValidation = new FormValidator({              
-  formSelector: '.popup__avatar',
-  inputSelector: '.popup__field',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__save-btn_inactive',
-  inputErrorClass: 'popup__field_error',
-  errorClass: 'popup__span-error_active'
-});
+const editAvatarValidation = new FormValidator(formElements, profilePopupAvatar);
 editAvatarValidation.enableValidation();
 
 Promise.all([api.getUserInfo(), api.getInitialCards()])
