@@ -1,7 +1,13 @@
-import {data} from "autoprefixer"
+import {
+    data
+} from "autoprefixer"
 
 export default class UserInfo {
-    constructor ({name, job, avatar}) {
+    constructor({
+        name,
+        job,
+        avatar
+    }) {
         this._name = document.querySelector(name);
         this._job = document.querySelector(job);
         this._avatar = document.querySelector(avatar);
@@ -19,7 +25,7 @@ export default class UserInfo {
         this._job.textContent = newUserData.about;
     }
 
-    setUserAvatar (data) {
+    setUserAvatar(data) {
         this._avatar.src = data.avatar;
     }
-} 
+}

@@ -39,11 +39,12 @@ const profilePopup = new PopupWithForm('.popup', (formData) => {
   //Записываем данные на страницу
   api.setUserInfo(formData) // отправляем данные о профиле на сервер
     .then(data => userInfo.setUserInfo(data))
+    .then(() => profilePopup.close())
     .catch((err) => {
       profilePopup.setDefaultButtonText();
       console.log(err)
     })
-    .then(() => profilePopup.close())
+    
 });
 profilePopup.setEventListeners();
 
@@ -55,11 +56,12 @@ const avatarPopup = new PopupWithForm('.popup__avatar', (formData) => {
       .then((data) => {
           userInfo.setUserAvatar(data);
       })
+      .then(() => avatarPopup.close())
       .catch((err) => {
           avatarPopup.setDefaultButtonText();
           console.log(err)
       })
-      .then(() => avatarPopup.close())
+      
 });
 
 
@@ -79,8 +81,8 @@ const deleteCardPopup = new PopupDelete('.popup_delete', (data, card) => {
   .then(() => {
   card.cardDelete();
   })
-  .catch(err => console.log(err))
   .then(() => deleteCardPopup.close())
+  .catch(err => console.log(err))
 }); 
   deleteCardPopup.setEventListeners();
 
